@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <script src="./scripts/axios.js"></script>
-  <script src="./scripts/client.js"></script>
+  <script defer src="./scripts/client.js"></script>
   <title>SQL TO-DO List</title>
 </head>
+
 <body>
   <header>
     <h1>SQL TO-DO List</h1>
   </header>
+  <main>
+    <section>
+      <form onsubmit="submitTask(event)">
+        <input id="task" type="text" placeholder="Insert New Task" data-testid="toDoTextInput">
+        <button type="submit" data-testid="submitButton">Submit Task</button>
+      </form>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>Task List</th>
+          <th>Click to crossoff</th>
+        </tr>
+      <tbody id="taskList">
+      </tbody>
+      </thead>
+    </table>
+  </main>
+
 
 </body>
+
 </html>
