@@ -47,6 +47,7 @@ function getTasks() {
             console.log('refreshTasks() response', response.data);
             todos = response.data;
             refreshTasks();
+
         })
         .catch(function (error) {
             console.log('error in GET', error)
@@ -79,6 +80,7 @@ function deleteTask(todosId) {
 }
 
 function updateTask(todosId, event) {
+
     event.target.parentElement.parentElement.classList.add("completed");
     axios.put(`/todos/${todosId}`).then((response) => {
 
