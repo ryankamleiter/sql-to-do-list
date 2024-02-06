@@ -3,7 +3,7 @@ const app = express();
 
 const todos = require('./routes/todos.router.js');
 require('dotenv').config();
-
+console.log(process.env.DATABASE_URL)
 
 let PORT = process.env.PORT || 5001;
 
