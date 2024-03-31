@@ -1,73 +1,76 @@
-const router = require('express').Router();
-const pool = require('../modules/pool');
+const express = require('express');
+const router = express.Router();
+const { Sequelize, DataTypes } = require('sequelize');
 
-router.get('/', (req, res) => {
-    let queryText = 'SELECT * FROM "todos";';
-    pool.query(queryText).then(result => {
-        res.send(result.rows);
-    })
-        .catch(error => {
-            console.log('error getting tasks', error);
-            res.sendStatus(500);
-        });
+// Initialize Sequelize
+const sequelize = new Sequelize('postgres://ryankamleiter@localhost:5432/weekend-to-do-app');
+
+const Todo = sequelize.define('Todo', {
+  text: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  isComplete: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  }
 });
 
-router.post('/', (req, res) => {
-    let newTask = req.body;
-    console.log(`Adding task`, newTask);
 
-    let queryText = `INSERT INTO "todos" ("text") VALUES ($1);`;
-    pool.query(queryText, [newTask.text])
-        .then(result => {
-            res.sendStatus(201);
-        })
-        .catch(error => {
-            console.log(`error adding new task`, error);
-            res.sendStatus(500);
-        })
-})
+(async () => {
+  await Todo.sync();
+})();
 
-router.delete('/:id', (req, res) => {
-    console.log('req params: ', req.params);
+// GET route to fetch all todos
+router.get('/', async (req, res) => {
+  try {
+    const todos = await Todo.findAll();
+    res.json(todos);
+  } catch (error) {
+    console.error('Error getting todos:', error);
+    res.sendStatus(500);
+  }
+});
 
-    let id = req.params.id;
+// POST route to create a new todo
+router.post('/', async (req, res) => {
+  try {
+    const newTodo = await Todo.create({ text: req.body.text });
+    res.sendStatus(201);
+  } catch (error) {
+    console.error('Error creating todo:', error);
+    res.sendStatus(500);
+  }
+});
 
-    let queryText = `DELETE FROM "todos" WHERE "id" = $1;`;
+// DELETE route to delete a todo
+router.delete('/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Todo.destroy({
+      where: {
+        id: id
+      }
+    });
+    res.sendStatus(204);
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+    res.sendStatus(500);
+  }
+});
 
-    pool.query(queryText, [id])
-        .then(
-            (result) => {
-                console.log(`DELETE query worked, ${queryText}`, result);
-                res.sendStatus(204);
-            }
-        )
-        .catch(
-            (error) => {
-                console.log(`DELETE query failed, ${queryText}`, error);
-                res.sendStatus(500);
-            });
-})
-router.put('/:id', (req, res) => {
-    console.log('in put on server');
-  
-    let id = req.params.id;
-  
-    let queryText = `UPDATE todos SET "isComplete" = NOT "isComplete" WHERE id=$1;`;
-  
-    pool.query(queryText, [id])
-      .then(
-        (result) => {
-          console.log(`PUT query worked, ${queryText}`, result);
-          res.sendStatus(201);
-        }
-      )
-      .catch(
-        (error) => {
-          console.log(`PUT query failed, ${queryText}`, error);
-          res.sendStatus(500);
-        }
-      );
-  })
-
+// PUT route to toggle todo completion status
+router.put('/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const todo = await Todo.findByPk(id);
+    todo.isComplete = !todo.isComplete;
+    await todo.save();
+    res.sendStatus(201);
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    res.sendStatus(500);
+  }
+});
 
 module.exports = router;

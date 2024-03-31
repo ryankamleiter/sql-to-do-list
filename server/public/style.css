@@ -3,21 +3,29 @@
     background-color: greenyellow;
 }
 
+#task {
+    margin: auto;
+}
 
 html {
-    background-color: antiquewhite;
+    background-color: #ffffff;
 }
 
-table,
-th,
-td {
+header {
+    background-color: lightblue;
+    padding: 20px; /* Example padding */
+    margin: 0; /* Example margin */
+}
+
+table {
+    margin: auto; /* Center the table horizontally */
+    margin-top: 2em; /* Add space above the table */
     border: 1px solid black;
     border-collapse: collapse;
-    height: 2.15em;
 }
 
-th,
-td {
+th, td {
+    border: 1px solid black;
     padding: .5em;
     min-width: 3.5em;
 }
@@ -33,4 +41,19 @@ tbody tr:nth-child(odd) {
 
 tbody tr:nth-child(even) {
     background: #dcdcdc;
+}
+
+.container {
+    margin: auto;
+    padding-top: 2em;
+    width: 10%;
+  }
+  
+h1 {
+    text-align: center;
+}
+  
+* {
+    margin: 0;
+    padding: 0;
 }
